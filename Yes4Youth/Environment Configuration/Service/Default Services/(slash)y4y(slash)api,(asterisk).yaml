@@ -1,0 +1,243 @@
+---
+type: CoreAPIBroker
+fields:
+  routingType: CUSTOM
+  uriprefix: /y4y/api
+  corsUsage: null
+  id: 4308e163-dc12-4b94-9a69-15f9d080141d
+  name: APIs
+  description: ""
+  destination: null
+  apiVersion: 1.2.1
+children:
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /create
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: 05447fcf-9626-4ce9-8b9a-43783a9452ea
+    name: Create
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Create
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: Authorization
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: elementType
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      name: body
+      description: ""
+      dataType: string
+      paramType: body
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /delete
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: d0088e1b-f66d-4b0c-b48a-6d4e3168f01d
+    name: Delete
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Delete
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: Authorization
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: Id
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: elementType
+      description: ""
+      dataType: string
+      paramType: header
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /update
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: 935cc1e7-aa07-4cea-bb67-aae986324389
+    name: Update
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Update
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: body
+      description: ""
+      dataType: string
+      paramType: body
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: Authorization
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: elementType
+      description: ""
+      dataType: string
+      paramType: header
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /read/contact
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: 98f8e0f2-e8b8-49f5-987c-867839a0b108
+    name: Read Contacts
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Read Contacts
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: Authorization
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: id
+      description: ""
+      dataType: string
+      paramType: header
+- type: CoreAPIMethod
+  fields:
+    blockUnspecifiedParams: false
+    uriprefix: /portal/login
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: f458d387-e3f5-4c6b-8577-2413b0aeb16f
+    name: Portal Login
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Portal Login
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /portal/checkmfa
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: 80f86e1d-ae24-42ba-9e3c-a5c492bc53c7
+    name: Check MFA
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Check MFA
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /portal/trustdevice
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: cb3f5d1b-74b5-43e0-9eb1-f63f40b5fe73
+    name: Trust device
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Trust device
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /customoperation
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: 552043a2-f97f-4df0-8855-79e9382e2bb2
+    name: Custom Operation (POST)
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Custom Operation (POST)
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /portal/getportal
+    httpMethod: GET
+    pathMatching: EXACT
+    corsUsage: null
+    id: 3bb36393-28e1-4bff-98e3-4e1c3cd49667
+    name: Get Portal
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Get Portal
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /customoperation
+    httpMethod: GET
+    pathMatching: EXACT
+    corsUsage: null
+    id: 48aded84-7924-40c7-b17c-cda831bacd2a
+    name: Custom Operation (GET)
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/APIs/Custom Operation (GET)
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null

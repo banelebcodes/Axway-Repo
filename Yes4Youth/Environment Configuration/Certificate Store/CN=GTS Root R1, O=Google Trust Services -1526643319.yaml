@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=GTS Root R1, O=Google Trust Services LLC, C=US
+  content: '{{file "CN=GTS Root R1, O=Google Trust Services -1526643319-cert.pem"}}'

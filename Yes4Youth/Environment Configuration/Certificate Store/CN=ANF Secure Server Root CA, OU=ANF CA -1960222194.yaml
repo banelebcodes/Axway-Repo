@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=ANF Secure Server Root CA, OU=ANF CA Raiz, O=ANF Autoridad de Certificacion, C=ES, SERIALNUMBER=G63287510
+  content: '{{file "CN=ANF Secure Server Root CA, OU=ANF CA -1960222194-cert.pem"}}'

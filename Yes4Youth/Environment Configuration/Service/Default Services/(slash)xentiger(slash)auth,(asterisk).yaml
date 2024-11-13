@@ -1,0 +1,35 @@
+---
+type: CoreAPIBroker
+fields:
+  summary: Authentication using Xentiger
+  routingType: CUSTOM
+  uriprefix: /xentiger/auth
+  corsUsage: null
+  id: 10304c79-a1a6-4ee7-9f56-81d331d7af8f
+  name: Xentiger Auth
+  description: ""
+  destination: null
+children:
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /login
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: ca9d8bdf-06e7-4c8e-9389-486efcf884df
+    name: Login
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/Xentiger Auth/Login
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: Body
+      description: ""
+      dataType: string
+      paramType: body

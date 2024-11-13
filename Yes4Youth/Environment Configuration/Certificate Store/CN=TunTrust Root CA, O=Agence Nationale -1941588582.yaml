@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=TunTrust Root CA, O=Agence Nationale de Certification Electronique, C=TN
+  content: '{{file "CN=TunTrust Root CA, O=Agence Nationale -1941588582-cert.pem"}}'

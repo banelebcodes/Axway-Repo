@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=Telia Root CA v2, O=Telia Finland Oyj, C=FI
+  content: '{{file "CN=Telia Root CA v2, O=Telia Finland Oyj-2019972103-cert.pem"}}'

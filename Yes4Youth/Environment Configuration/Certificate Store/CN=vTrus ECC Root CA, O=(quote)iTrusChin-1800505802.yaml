@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=vTrus ECC Root CA, O="iTrusChina Co.,Ltd.", C=CN
+  content: '{{file "CN=vTrus ECC Root CA, O=(quote)iTrusChin-1800505802-cert.pem"}}'

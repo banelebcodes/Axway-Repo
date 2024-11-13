@@ -1,0 +1,9 @@
+---
+type: Certificate
+fields:
+  dname: CN=yb72.yes4youth.co.za
+  engine: ""
+  keyId: ""
+  conversation: ""
+  certificateRealm: ""
+  content: '{{file "CN=yb72.yes4youth.co.za-cert.pem"}}'

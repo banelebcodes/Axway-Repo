@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=UCA Extended Validation Root, O=UniTrust, C=CN
+  content: '{{file "CN=UCA Extended Validation Root, O=UniTr-1945260732-cert.pem"}}'

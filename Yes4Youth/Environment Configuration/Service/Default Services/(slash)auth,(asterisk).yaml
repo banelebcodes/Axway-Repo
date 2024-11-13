@@ -1,0 +1,137 @@
+---
+type: CoreAPIBroker
+fields:
+  name: Authorization
+  id: 1e920be1-8eb3-4838-b184-b9066ca4a31c
+  description: ""
+  summary: Authorization API
+  destination: null
+  routingType: CUSTOM
+  uriprefix: /auth
+  corsUsage: null
+  apiVersion: 1.2
+children:
+- type: CoreAPIMethod
+  fields:
+    name: Login
+    id: 5cc0901e-0e2c-47bb-a645-4bddde413d25
+    description: Login
+    notes: Login
+    destinationHttpVerb: '*'
+    destinationPath: null
+    copyQueryParams: true
+    responseSchema: /null
+    filterCircuit: /Policies/Generated Policies/REST API's/Authorization/Login
+    uriprefix: /account/login
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      name: user
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      name: accessKey
+      description: ""
+      dataType: string
+      paramType: header
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /contacts/login
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: a8c6618c-48cd-474f-8d7f-cc7674e2e9ef
+    name: Login (Contact)
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/Authorization/Login (Contact)
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: username
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: password
+      description: ""
+      dataType: string
+      paramType: header
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /preauth
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: 9c613f6f-b832-495b-a9e9-de9e3f4e5c50
+    name: Portal Pre-Auth
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/Authorization/Portal Pre-Auth
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /portal-login
+    httpMethod: POST
+    pathMatching: EXACT
+    corsUsage: null
+    id: 889c97ef-0ae6-458b-955f-f7b13fc80923
+    name: Portal Login
+    description: Portal Login
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/Authorization/Portal Login
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: Authorization
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: username
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: password
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: portal_key
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: deviceToken
+      description: ""
+      dataType: string
+      paramType: header

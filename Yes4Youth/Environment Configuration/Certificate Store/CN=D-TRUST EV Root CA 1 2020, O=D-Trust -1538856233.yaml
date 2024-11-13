@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=D-TRUST EV Root CA 1 2020, O=D-Trust GmbH, C=DE
+  content: '{{file "CN=D-TRUST EV Root CA 1 2020, O=D-Trust -1538856233-cert.pem"}}'

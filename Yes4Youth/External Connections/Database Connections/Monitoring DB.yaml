@@ -1,0 +1,8 @@
+---
+type: DbConnection
+fields:
+  name: Monitoring DB
+  url: jdbc:mysql://10.0.50.8:3306/metrics?useSSL=false
+  username: root
+  password: VGVncmFZNHlfMjAyNCE=
+  wildcardPassword: ""

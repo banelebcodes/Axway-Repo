@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=DigiCert TLS RSA4096 Root G5, O="DigiCert, Inc.", C=US
+  content: '{{file "CN=DigiCert TLS RSA4096 Root G5, O=(quot-1427742108-cert.pem"}}'

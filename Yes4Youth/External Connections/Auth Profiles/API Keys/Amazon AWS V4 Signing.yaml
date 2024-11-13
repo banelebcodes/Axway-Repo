@@ -1,0 +1,7 @@
+---
+type: ApiKeyProviderProfile
+fields:
+  name: Amazon AWS V4 Signing
+  apiKeyWhere: ""
+  apiKeyName: ""
+  apiKeySigner: com.vordel.circuit.apikeys.AWSAuthenticateV4RequestREST

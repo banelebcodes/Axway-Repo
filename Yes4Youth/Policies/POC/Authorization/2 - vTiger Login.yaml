@@ -1,0 +1,53 @@
+---
+type: FilterCircuit
+fields:
+  start: ./Set Message
+  name: 2 - vTiger Login
+  description: ""
+  category: /System/Policy Categories/authorization
+children:
+- type: ChangeMessageFilter
+  fields:
+    body: username=${vTiger.auth.user}&accessKey=${vTiger.auth.hashedValue}
+    outputContentType: application/x-www-form-urlencoded
+    name: Set Message
+  routing:
+    success: ../Call vTiger Login
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: ConnectToURLFilter
+  fields:
+    url: http://yb72.yes4youth.co.za/webservice.php?operation=login&username=${vTiger.auth.user}&accessKey=${vTiger.auth.hashedValue}
+    caCerts: []
+    ssloptions:
+    - nosslv3
+    - notlsv1
+    - noSslRenegotiation
+    - notlsv1_1
+    name: Call vTiger Login
+  routing:
+    success: ../JSON Path
+  logging:
+    fatal: 'Error occurred while routing request to endpoint. Error: ${circuit.exception}'
+    failure: Failed to route request to endpoint.
+    success: Successfully routed request to endpoint
+  children:
+  - type: SaveToFileFilter
+    fields:
+      name: Persistence Details
+- type: JSONPathFilter
+  fields:
+    name: JSON Path
+  children:
+  - type: JSONPath
+    fields:
+      attributeName: vTiger.auth.session
+      expression: $.result.sessionName
+      unmarshalType: java.lang.String
+  - type: JSONPath
+    fields:
+      attributeName: vTiger.auth.userId
+      expression: $.result.userId
+      unmarshalType: java.lang.String

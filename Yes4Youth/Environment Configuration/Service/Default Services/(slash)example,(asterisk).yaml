@@ -1,0 +1,26 @@
+---
+type: CoreAPIBroker
+fields:
+  routingType: CUSTOM
+  uriprefix: /example
+  corsUsage: null
+  id: 7b68808e-cabc-4f29-9506-6fd90260baab
+  name: Example
+  description: ""
+  destination: null
+children:
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /test
+    httpMethod: GET
+    pathMatching: EXACT
+    corsUsage: null
+    id: ed2f3a68-607c-4ac9-b425-8735f781f20f
+    name: Example1
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/Example/Example1
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null

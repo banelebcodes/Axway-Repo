@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=Trustwave Global Certification Authority, O="Trustwave Holdings, Inc.", L=Chicago, ST=Illinois, C=US
+  content: '{{file "CN=Trustwave Global Certification Author-1184054246-cert.pem"}}'

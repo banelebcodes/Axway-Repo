@@ -1,0 +1,10 @@
+---
+type: CoreAPIBroker
+fields:
+  routingType: CUSTOM
+  uriprefix: /custome-operation
+  corsUsage: null
+  id: 2cd86343-10cf-4de1-9aed-21c10225daee
+  name: Custom Operations
+  description: ""
+  destination: null

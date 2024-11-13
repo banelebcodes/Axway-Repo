@@ -1,0 +1,8 @@
+---
+type: OAuthProviderProfile
+fields:
+  name: Google
+  class: com.vordel.oauth.client.providers.OAuth2ProviderGoogle
+  authzUrl: https://accounts.google.com/o/oauth2/auth
+  tokenUrl: https://accounts.google.com/o/oauth2/token
+  tokenStore: /Libraries/OAuth2 Stores/Client Access Token Stores/OAuth Client Access Token Store

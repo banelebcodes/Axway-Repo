@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=e-Szigno Root CA 2017, OID.2.5.4.97=VATHU-23584497, O=Microsec Ltd., L=Budapest, C=HU
+  content: '{{file "CN=e-Szigno Root CA 2017, OID.2.5.4.97=V-1688975680-cert.pem"}}'

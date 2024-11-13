@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=E-Tugra Global Root CA RSA v3, OU=E-Tugra Trust Center, O=E-Tugra EBG A.S., L=Ankara, C=TR
+  content: '{{file "CN=E-Tugra Global Root CA RSA v3, OU=E-T-819652400-cert.pem"}}'

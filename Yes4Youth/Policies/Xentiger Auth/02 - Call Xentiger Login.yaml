@@ -1,0 +1,54 @@
+---
+type: FilterCircuit
+fields:
+  name: 02 - Call Xentiger Login
+  description: ""
+  start: ./Connect to URL
+children:
+- type: ConnectToURLFilter
+  fields:
+    url: https://xentiger-dev.yes4youth.co.za/auth
+    body: ${message.payload}
+    ssloptions:
+    - nosslv3
+    - notlsv1
+    - noSslRenegotiation
+    - notlsv1_1
+    name: Connect to URL
+    caCerts: []
+  routing:
+    success: ../JSON Path
+  logging:
+    fatal: 'Error occurred while routing request to endpoint. Error: ${circuit.exception}'
+    failure: Failed to route request to endpoint.
+    success: Successfully routed request to endpoint
+  children:
+  - type: SaveToFileFilter
+    fields:
+      name: Persistence Details
+- type: JSONPathFilter
+  fields:
+    name: JSON Path
+  routing:
+    success: ../True Filter
+    failure: ../False Filter
+  children:
+  - type: JSONPath
+    fields:
+      unmarshalType: java.lang.string
+      failOnError: true
+      attributeName: xentiger.jwt
+      expression: $.token
+- type: TrueFilter
+  fields:
+    name: True Filter
+  logging:
+    fatal: 'True filter error. Error: ${circuit.exception}'
+    failure: ""
+    success: True filter passed
+- type: FalseFilter
+  fields:
+    name: False Filter
+  logging:
+    fatal: 'False filter error. Error: ${circuit.exception}'
+    success: ""

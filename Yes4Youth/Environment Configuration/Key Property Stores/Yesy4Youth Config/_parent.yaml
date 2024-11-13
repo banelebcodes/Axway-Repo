@@ -1,0 +1,8 @@
+---
+type: KPSPackage
+fields:
+  name: Yesy4Youth Config
+  description: ""
+  alias: cfg_
+  dataSource: ./Data Sources/Cassandra Storage
+  cache: /null

@@ -1,0 +1,5 @@
+---
+type: InetInterface
+fields:
+  name: Traffic HTTP Interface
+  port: ${env.PORT.TRAFFIC}

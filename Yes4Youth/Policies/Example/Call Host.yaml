@@ -1,0 +1,10 @@
+---
+type: FilterCircuit
+fields:
+  name: Call Host
+  description: ""
+  start: ./Extract REST Request Attributes
+children:
+- type: ExtractRESTAttributesFilter
+  fields:
+    name: Extract REST Request Attributes

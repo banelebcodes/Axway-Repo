@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=DigiCert TLS ECC P384 Root G5, O="DigiCert, Inc.", C=US
+  content: '{{file "CN=DigiCert TLS ECC P384 Root G5, O=(quo-159556243-cert.pem"}}'

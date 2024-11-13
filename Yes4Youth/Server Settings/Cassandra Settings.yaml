@@ -1,0 +1,11 @@
+---
+type: CassandraSettings
+fields:
+  name: Cassandra Settings
+  keySpace: ${environment.CASS_KEYSPACE}
+  throttlingKeySpace: ${environment.CASS_TKEYSPACE}
+children:
+- type: CassandraServer
+  fields:
+    name: Local Cassandra Server
+    host: ${environment.CASS_HOST}

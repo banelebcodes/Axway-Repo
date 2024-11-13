@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=emSign Root CA - G1, O=eMudhra Technologies Limited, OU=emSign PKI, C=IN
+  content: '{{file "CN=emSign Root CA - G1, O=eMudhra Techno-1252449479-cert.pem"}}'

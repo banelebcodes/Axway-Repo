@@ -1,0 +1,82 @@
+---
+type: FilterCircuit
+fields:
+  name: Update Operation
+  description: ""
+  start: ./Extract from JWT
+children:
+- type: ExtractRESTAttributesFilter
+  fields:
+    decode: true
+    name: Extract REST Request Attributes
+  routing:
+    success: ../Retrieve from HTTP header
+- type: AttributeExtractHTTPHeaderFilter
+  fields:
+    headerName: Authorization
+    attributeName: payload
+    name: Retrieve from HTTP header
+  routing:
+    success: ../Copy / Modify Attributes
+  logging:
+    fatal: 'Error occurred while extracting attributes from HTTP header. Error: ${circuit.exception}'
+    failure: Failed to extract attribute HTTP header
+    success: Extracted attribute from HTTP header
+- type: CopyAttributeFilter
+  fields:
+    name: Copy / Modify Attributes
+  routing:
+    success: ../Call vTiger
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      toAttributeName: operation
+      fromAttributeLocation: 3
+      fromAttributeName: ""
+      attributeValue: update
+  - type: CopyAttribute
+    fields:
+      toAttributeName: elementType
+      fromAttributeName: http.header.elementType
+      attributeValue: ""
+- type: CircuitDelegateFilter
+  fields:
+    name: Call vTiger
+    circuitPK: /Policies/Utilities/Connect to vTiger (API Calls)
+  routing:
+    success: ../Reflect Successful Message
+    failure: ../Reflect Unsuccessful Message
+  logging:
+    fatal: 'Error in calling policy shortcut circuit. Error: ${circuit.exception}'
+    failure: Failed in calling policy shortcut
+    success: Success in calling policy shortcut
+- type: Reflector
+  fields:
+    httpResponseStatus: ${http.response.status}
+    name: Reflect Successful Message
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: Reflector
+  fields:
+    httpResponseStatus: ${http.response.status}
+    name: Reflect Unsuccessful Message
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: CircuitDelegateFilter
+  fields:
+    name: Extract from JWT
+    circuitPK: /Policies/Utilities/Get Session Token from JWT
+  routing:
+    success: ../Extract REST Request Attributes
+  logging:
+    fatal: 'Error in calling policy shortcut circuit. Error: ${circuit.exception}'
+    failure: Failed in calling policy shortcut
+    success: Success in calling policy shortcut

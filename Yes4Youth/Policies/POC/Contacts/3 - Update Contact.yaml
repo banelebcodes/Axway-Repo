@@ -1,0 +1,178 @@
+---
+type: FilterCircuit
+fields:
+  start: ./Extract REST Request Attributes
+  name: 3 - Update Contact
+  description: Create contact in vTiger
+children:
+- type: ExtractRESTAttributesFilter
+  fields:
+    decode: true
+    name: Extract REST Request Attributes
+  routing:
+    success: ../Retrieve from HTTP header
+- type: AttributeExtractHTTPHeaderFilter
+  fields:
+    headerName: Authorization
+    attributeName: payload
+    name: Retrieve from HTTP header
+  routing:
+    success: ../Scripting Language
+  logging:
+    fatal: 'Error occurred while extracting attributes from HTTP header. Error: ${circuit.exception}'
+    failure: Failed to extract attribute HTTP header
+    success: Extracted attribute from HTTP header
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: Scripting Language
+    script: '{{file "3 - Update Contact-Files/Scripting Language.groovy"}}'
+  routing:
+    success: ../JWT Verify
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: JWTVerifyFilter
+  fields:
+    keyDiscoverySelection: 1
+    usePublicKey: false
+    publicKeyAlias: /null
+    sharedKey: |-
+      ZmY5YzFhYjAyOTVlMmNiMzRjMzNhZGIwZmJjMDZjNDE5YTAwODJlNjZlYjU4ZmVjYmI3NDgxMWNh
+      ODZmMTc1Mg==
+    useJwkKey: false
+    critHeader: []
+    signAlgorithms:
+    - HS256
+    - RS256
+    - ES256
+    - PS256
+    contentTypes: []
+    types: []
+    setPayloadMsgAttribute: true
+    name: JWT Verify
+  routing:
+    success: ../Set Session Token
+    failure: ../Set Message{1}
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: Set Session Token
+    script: '{{file "3 - Update Contact-Files/Set Session Token.groovy"}}'
+  routing:
+    success: ../Check Group Membership
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: AuthZUserFilter
+  fields:
+    user: ${auth.axwayUser}
+    groupName: Admin
+    name: Check Group Membership
+  routing:
+    success: ../URL Encode
+    failure: ../Set Message{1}
+  logging:
+    fatal: 'Error occurred while authorizing user ${authentication.subject.id}. Error: ${circuit.exception}'
+    failure: Failed to authorize user ${authentication.subject.id}
+    success: Successfully authorized user ${authentication.subject.id}
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: URL Encode
+    script: '{{file "3 - Update Contact-Files/URL Encode.groovy"}}'
+  routing:
+    success: ../Add HTTP Header
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: AddHTTPHeaderFilter
+  fields:
+    headerName: Content-Type
+    headerValue: application/x-www-form-urlencoded
+    name: Add HTTP Header
+  routing:
+    success: ../Set Message
+  logging:
+    fatal: 'Error in adding the HTTP header to the message. Error: ${circuit.exception}'
+    failure: Failed in adding the HTTP header to the message
+    success: Success in adding the HTTP header to the message
+- type: ChangeMessageFilter
+  fields:
+    body: ${vTiger.body}
+    outputContentType: application/x-www-form-urlencoded
+    name: Set Message
+  routing:
+    success: ../Trace Filter{1}
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: TraceFilter
+  fields:
+    traceMsg: ${jwt.body}
+    traceLevel: 3
+    name: Trace Filter{1}
+  routing:
+    success: ../Call vTiger Login Challenge
+  logging:
+    fatal: 'Error while tracing the message properties. Error: ${circuit.exception}'
+    failure: Failed to trace the message properties
+    success: Traced the message properties
+- type: ConnectToURLFilter
+  fields:
+    url: http://yb72.yes4youth.co.za/webservice.php
+    caCerts: []
+    ssloptions:
+    - nosslv3
+    - notlsv1
+    - notlsv1_1
+    name: Call vTiger Login Challenge
+  routing:
+    success: ../Reflect Message{2}
+  logging:
+    fatal: 'Error occurred while routing request to endpoint. Error: ${circuit.exception}'
+    failure: Failed to route request to endpoint.
+    success: Successfully routed request to endpoint
+  children:
+  - type: SaveToFileFilter
+    fields:
+      name: Persistence Details
+- type: Reflector
+  fields:
+    name: Reflect Message{2}
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: ChangeMessageFilter
+  fields:
+    body: Unauthorized
+    outputContentType: java.lang.String
+    name: Set Message{1}
+  routing:
+    success: ../Reflect Message{1}
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: Reflector
+  fields:
+    httpResponseStatus: 401
+    name: Reflect Message{1}
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message

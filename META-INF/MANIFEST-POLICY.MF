@@ -1,4 +1,7 @@
 Manifest-Version: 1.0
-test: hello
+Name: QuickStart Server Configuration
+Description: The QuickStart Server configuration policies
+Version: v1 (Policy)
+VersionComment: Imported API Manager configuration
 ChangedBy: admin
 

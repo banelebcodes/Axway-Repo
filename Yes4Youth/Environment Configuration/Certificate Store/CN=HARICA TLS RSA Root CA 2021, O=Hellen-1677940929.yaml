@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=HARICA TLS RSA Root CA 2021, O=Hellenic Academic and Research Institutions CA, C=GR
+  content: '{{file "CN=HARICA TLS RSA Root CA 2021, O=Hellen-1677940929-cert.pem"}}'

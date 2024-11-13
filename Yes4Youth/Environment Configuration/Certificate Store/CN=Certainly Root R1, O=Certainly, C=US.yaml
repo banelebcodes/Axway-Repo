@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=Certainly Root R1, O=Certainly, C=US
+  content: '{{file "CN=Certainly Root R1, O=Certainly, C=US-cert.pem"}}'

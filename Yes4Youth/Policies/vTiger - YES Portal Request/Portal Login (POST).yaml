@@ -1,0 +1,142 @@
+---
+type: FilterCircuit
+fields:
+  name: Portal Login (POST)
+  description: ""
+  start: ./Extract from JWT
+children:
+- type: CircuitDelegateFilter
+  fields:
+    name: Extract from JWT
+    circuitPK: /Policies/Utilities/Get Session Token from JWT
+  routing:
+    success: ../Extract REST Request Attributes
+  logging:
+    fatal: 'Error in calling policy shortcut circuit. Error: ${circuit.exception}'
+    failure: Failed in calling policy shortcut
+    success: Success in calling policy shortcut
+- type: ExtractRESTAttributesFilter
+  fields:
+    decode: true
+    name: Extract REST Request Attributes
+  routing:
+    success: ../Retrieve from HTTP header
+- type: AttributeExtractHTTPHeaderFilter
+  fields:
+    headerName: Authorization
+    attributeName: payload
+    name: Retrieve from HTTP header
+  routing:
+    success: ../Copy / Modify Attributes
+  logging:
+    fatal: 'Error occurred while extracting attributes from HTTP header. Error: ${circuit.exception}'
+    failure: Failed to extract attribute HTTP header
+    success: Extracted attribute from HTTP header
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    name: URL Encode
+    consumedProperties: []
+    generatedProperties: []
+    requiredProperties: []
+    script: '{{file "Portal Login (POST)-Files/URL Encode.groovy"}}'
+  routing:
+    success: ../Set Message
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: ChangeMessageFilter
+  fields:
+    body: ${queryString}
+    outputContentType: application/x-www-form-urlencoded
+    name: Set Message
+  routing:
+    success: ../Add HTTP Header
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: AddHTTPHeaderFilter
+  fields:
+    headerName: Content-Type
+    headerValue: application/x-www-form-urlencoded
+    name: Add HTTP Header
+  routing:
+    success: ../Call vTiger API
+  logging:
+    fatal: 'Error in adding the HTTP header to the message. Error: ${circuit.exception}'
+    failure: Failed in adding the HTTP header to the message
+    success: Success in adding the HTTP header to the message
+- type: Reflector
+  fields:
+    httpResponseStatus: ${http.response.status}
+    name: Reflect Successful Message
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: Reflector
+  fields:
+    httpResponseStatus: ${http.response.status}
+    name: Reflect Unsuccessful Message
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: CopyAttributeFilter
+  fields:
+    name: Copy / Modify Attributes
+  routing:
+    success: ../URL Encode
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      toAttributeName: operation
+      fromAttributeLocation: 3
+      fromAttributeName: ""
+      attributeValue: create
+  - type: CopyAttribute
+    fields:
+      toAttributeName: userName
+      fromAttributeName: http.header.username
+      attributeValue: ""
+  - type: CopyAttribute
+    fields:
+      toAttributeName: password
+      fromAttributeName: http.header.password
+      attributeValue: ""
+  - type: CopyAttribute
+    fields:
+      toAttributeName: deviceToken
+      fromAttributeName: http.header.deviceToken
+      attributeValue: ""
+  - type: CopyAttribute
+    fields:
+      toAttributeName: portalKey
+      fromAttributeName: http.header.portalKey
+      attributeValue: ""
+- type: ConnectToURLFilter
+  fields:
+    url: http://yb72.yes4youth.co.za/webservice.php
+    caCerts: []
+    ssloptions:
+    - nosslv3
+    - notlsv1
+    - notlsv1_1
+    name: Call vTiger API
+  routing:
+    success: ../Reflect Successful Message
+    failure: ../Reflect Unsuccessful Message
+  logging:
+    fatal: 'Error occurred while routing request to endpoint. Error: ${circuit.exception}'
+    failure: Failed to route request to endpoint.
+    success: Successfully routed request to endpoint
+  children:
+  - type: SaveToFileFilter
+    fields:
+      name: Persistence Details

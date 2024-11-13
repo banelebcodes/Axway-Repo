@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=GLOBALTRUST 2020, O=e-commerce monitoring GmbH, C=AT
+  content: '{{file "CN=GLOBALTRUST 2020, O=e-commerce monito-853301923-cert.pem"}}'

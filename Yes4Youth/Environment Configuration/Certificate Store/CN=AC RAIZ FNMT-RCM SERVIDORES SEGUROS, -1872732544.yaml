@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=AC RAIZ FNMT-RCM SERVIDORES SEGUROS, OID.2.5.4.97=VATES-Q2826004J, OU=Ceres, O=FNMT-RCM, C=ES
+  content: '{{file "CN=AC RAIZ FNMT-RCM SERVIDORES SEGUROS, -1872732544-cert.pem"}}'

@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=Trustwave Global ECC P384 Certification Authority, O="Trustwave Holdings, Inc.", L=Chicago, ST=Illinois, C=US
+  content: '{{file "CN=Trustwave Global ECC P384 Certificati-637547308-cert.pem"}}'

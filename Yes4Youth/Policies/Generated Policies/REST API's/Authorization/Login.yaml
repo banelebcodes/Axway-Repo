@@ -1,0 +1,17 @@
+---
+type: FilterCircuit
+fields:
+  start: ./Set service context
+  name: Login
+children:
+- type: ServiceContextFilter
+  fields:
+    serviceName: ${api.name}
+    metricsMask: 1
+    name: Set service context
+  routing:
+    success: ../Routing
+- type: CircuitDelegateFilter
+  fields:
+    circuitPK: /Policies/Auth/0 - vTiger Account Login
+    name: Routing

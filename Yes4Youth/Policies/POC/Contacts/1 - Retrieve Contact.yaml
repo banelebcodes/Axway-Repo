@@ -1,0 +1,172 @@
+---
+type: FilterCircuit
+fields:
+  start: ./Extract REST Request Attributes
+  name: 1 - Retrieve Contact
+  description: ""
+children:
+- type: ExtractRESTAttributesFilter
+  fields:
+    decode: true
+    name: Extract REST Request Attributes
+  routing:
+    success: ../Retrieve from HTTP header
+- type: AttributeExtractHTTPHeaderFilter
+  fields:
+    headerName: Authorization
+    attributeName: payload
+    name: Retrieve from HTTP header
+  routing:
+    success: ../Scripting Language
+  logging:
+    fatal: 'Error occurred while extracting attributes from HTTP header. Error: ${circuit.exception}'
+    failure: Failed to extract attribute HTTP header
+    success: Extracted attribute from HTTP header
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: Scripting Language
+    script: '{{file "1 - Retrieve Contact-Files/Scripting Language.groovy"}}'
+  routing:
+    success: ../Trace Filter
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: TraceFilter
+  fields:
+    traceMsg: ${payload}
+    traceLevel: 3
+    traceBody: true
+    doIndent: true
+    name: Trace Filter
+  routing:
+    success: ../JWT Verify
+  logging:
+    fatal: 'Error while tracing the message properties. Error: ${circuit.exception}'
+    failure: Failed to trace the message properties
+    success: Traced the message properties
+- type: JWTVerifyFilter
+  fields:
+    keyDiscoverySelection: 1
+    usePublicKey: false
+    publicKeyAlias: /null
+    sharedKey: |-
+      ZmY5YzFhYjAyOTVlMmNiMzRjMzNhZGIwZmJjMDZjNDE5YTAwODJlNjZlYjU4ZmVjYmI3NDgxMWNh
+      ODZmMTc1Mg==
+    useJwkKey: false
+    critHeader: []
+    signAlgorithms:
+    - HS256
+    - RS256
+    - ES256
+    - PS256
+    contentTypes: []
+    types: []
+    setPayloadMsgAttribute: true
+    name: JWT Verify
+  routing:
+    success: ../Scripting Language{1}
+    failure: ../Reflect Message{1}
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: Scripting Language{1}
+    script: '{{file "1 - Retrieve Contact-Files/Scripting Language{1}.groovy"}}'
+  routing:
+    success: ../Trace Filter{1}
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: TraceFilter
+  fields:
+    traceMsg: ${jwt.body}
+    traceLevel: 3
+    name: Trace Filter{1}
+  routing:
+    success: ../Call vTiger Login Challenge
+  logging:
+    fatal: 'Error while tracing the message properties. Error: ${circuit.exception}'
+    failure: Failed to trace the message properties
+    success: Traced the message properties
+- type: ConnectToURLFilter
+  fields:
+    url: http://yb72.yes4youth.co.za/webservice.php?operation=retrieve&sessionName=${sessionToken}&elementType=Contact&id=${params.body.id}
+    caCerts: []
+    ssloptions:
+    - nosslv3
+    - notlsv1
+    - notlsv1_1
+    name: Call vTiger Login Challenge
+  routing:
+    success: ../Reflect Message{2}
+  logging:
+    fatal: 'Error occurred while routing request to endpoint. Error: ${circuit.exception}'
+    failure: Failed to route request to endpoint.
+    success: Successfully routed request to endpoint
+  children:
+  - type: SaveToFileFilter
+    fields:
+      name: Persistence Details
+- type: Reflector
+  fields:
+    name: Reflect Message{2}
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: Reflector
+  fields:
+    httpResponseStatus: 401
+    name: Reflect Message{1}
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: JSONPathFilter
+  fields:
+    name: JSON Path
+  routing:
+    success: ../Trace Filter{1}
+  children:
+  - type: JSONPath
+    fields:
+      attributeName: sessionToken
+      expression: $.jwt.body
+      unmarshalType: java.lang.String
+- type: ValidateRESTFilter
+  fields:
+    httpMethod: GET
+    uriTemplate: /contacts/retrievecontact
+    performExtraction: true
+    name: Validate REST Filter
+  routing:
+    success: ../Retrieve from HTTP header
+  children:
+  - type: FacetRestriction
+    fields:
+      desc: id
+      attribute: contactId
+      maxValue: ""
+      minValue: ""
+      whitespace: Collapse
+      pattern: ""
+      enumeration: []
+- type: JSONPathFilter
+  fields:
+    name: JSON Path{1}
+  routing:
+    success: ../Retrieve from HTTP header
+  children:
+  - type: JSONPath
+    fields:
+      attributeName: userId
+      expression: $.id
+      unmarshalType: java.lang.String

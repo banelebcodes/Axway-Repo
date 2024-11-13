@@ -1,0 +1,70 @@
+---
+type: FilterCircuit
+fields:
+  name: Get Session Token from JWT
+  description: ""
+  start: ./Extract Headers
+children:
+- type: ExtractRESTAttributesFilter
+  fields:
+    useQueryString: false
+    decode: true
+    name: Extract Headers
+  routing:
+    success: ../Strip Bearer off token
+- type: StringReplaceFilter
+  fields:
+    sourceAttribute: http.header.Authorization
+    destAttribute: y4y.api.jwt
+    destAttributeOverride: true
+    matchMode: REGEX_REPLACE
+    regexMatchString: '[Bb]earer * '
+    name: Strip Bearer off token
+  routing:
+    success: ../JWT Verify
+- type: JWTVerifyFilter
+  fields:
+    keyDiscoverySelection: 1
+    usePublicKey: false
+    publicKeyAlias: /null
+    sharedKey: |-
+      ZmY5YzFhYjAyOTVlMmNiMzRjMzNhZGIwZmJjMDZjNDE5YTAwODJlNjZlYjU4ZmVjYmI3NDgxMWNh
+      ODZmMTc1Mg==
+    useJwkKey: false
+    critHeader: []
+    signAlgorithms:
+    - HS256
+    - RS256
+    - ES256
+    - PS256
+    contentTypes: []
+    types: []
+    name: JWT Verify
+    jwsToken: ${y4y.api.jwt}
+    useCtyHeaderContentType: false
+    defaultContentType: application/json
+  routing:
+    success: ../Get JWT fields
+- type: JSONPathFilter
+  fields:
+    name: Get JWT fields
+  logging:
+    failure: Missing sub, exp, DeviceUUID or Username
+  children:
+  - type: JSONPath
+    fields:
+      attributeName: y4y.jwt.expires
+      expression: $.exp
+      unmarshalType: java.lang.String
+      failOnError: true
+  - type: JSONPath
+    fields:
+      attributeName: y4y.jwt.sessionToken
+      expression: $.sessionToken
+      unmarshalType: java.lang.String
+  - type: JSONPath
+    fields:
+      attributeName: y4y.jwt.Username
+      expression: $.sub
+      unmarshalType: java.lang.String
+      failOnError: true

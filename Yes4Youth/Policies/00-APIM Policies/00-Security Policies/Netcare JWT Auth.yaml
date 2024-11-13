@@ -1,0 +1,446 @@
+---
+type: FilterCircuit
+fields:
+  start: ./[DEBUG] Incoming Attribs and content
+  name: Netcare JWT Auth
+  description: ""
+children:
+- type: TraceFilter
+  fields:
+    traceMsg: '[DEBUG] Incoming Attribs and content'
+    traceBody: true
+    name: '[DEBUG] Incoming Attribs and content'
+  routing:
+    success: ../Check for mobit Exclusions
+  logging:
+    fatal: 'Error while tracing the message properties. Error: ${circuit.exception}'
+    failure: Failed to trace the message properties
+    success: Traced the message properties
+- type: CompareAttributeFilter
+  fields:
+    matchingRule: MATCH_ONE
+    name: Check for mobit Exclusions
+  routing:
+    success: ../True Filter
+    failure: ../Check for http.request.incoming.path for JWT Authentication
+  children:
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /mobit/GetInstitutions
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /mobit/GetLastConfigRequest
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /mobit/SubmitDeviceConfigRequest
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /mobill/SubmitDeviceConfigRequest
+- type: TrueFilter
+  fields:
+    name: True Filter
+  logging:
+    fatal: 'True filter error. Error: ${circuit.exception}'
+    failure: ""
+    success: True filter passed
+- type: CompareAttributeFilter
+  fields:
+    matchingRule: MATCH_ONE
+    name: Check for http.request.incoming.path for JWT Authentication
+  routing:
+    success: ../Store Incoming Request
+    failure: ../True Filter
+  children:
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /amip
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /mobill
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /clinicalpharmacy
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /safehands
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.incoming.path}
+      matchType: BEGINS_WITH
+      expression: /mobit
+- type: StoreContentBodyToAttributeFilter
+  fields:
+    name: Store Incoming Request
+  routing:
+    success: ../Extract Headers
+  logging:
+    fatal: 'Error in storing the message. Error: ${circuit.exception}'
+    failure: Failed to store the message in attribute
+    success: 'Success in storing the message to attribute '
+- type: ExtractRESTAttributesFilter
+  fields:
+    useQueryString: false
+    decode: true
+    name: Extract Headers
+  routing:
+    success: ../Strip Bearer off token
+- type: StringReplaceFilter
+  fields:
+    sourceAttribute: http.header.Authorization
+    destAttribute: netcare.api.jwt
+    destAttributeOverride: true
+    matchMode: REGEX_REPLACE
+    regexMatchString: '[Bb]earer * '
+    name: Strip Bearer off token
+  routing:
+    success: ../Set jwt.symmetric.key
+    failure: ../Set Invalid Token Error
+- type: SetAttributeFilter
+  fields:
+    messageAttribute: jwt.symmetric.key
+    attributeValue: cHVycGwzQHdoZWVsY2hhaSFyaW50aGVJQ1VpY2VjcmVhbWlzR3I4
+    name: Set jwt.symmetric.key
+  routing:
+    success: ../JWT Verify
+  logging:
+    fatal: 'Error while setting the attribute value. Error: ${circuit.exception}'
+    failure: Failed to set the attribute value
+    success: Set the attribute value
+- type: JWTVerifyFilter
+  fields:
+    jwsToken: ${netcare.api.jwt}
+    keyDiscoverySelection: 1
+    usePublicKey: false
+    publicKeyAlias: /null
+    sharedKeySelection: 2
+    sharedKey: Y0hWeWNHd3pRSGRvWldWc1kyaGhhU0Z5YVc1MGFHVkpRMVZwWTJWamNtVmhiV2x6UjNJNA==
+    sharedKeyInMsgAttr: ${jwt.symmetric.key}
+    useJwkKey: false
+    critHeader: []
+    signAlgorithms:
+    - HS256
+    - RS256
+    - HS512
+    - ES256
+    - HS384
+    - PS256
+    - RS512
+    - RS384
+    - ES512
+    - PS512
+    - ES384
+    - PS384
+    contentTypes: []
+    types: []
+    useCtyHeaderContentType: false
+    defaultContentType: application/json
+    setPayloadOutputType: json
+    name: JWT Verify
+  routing:
+    success: ../Get JWT fields
+    failure: ../Set Invalid Token Error
+- type: JSONPathFilter
+  fields:
+    name: Get JWT fields
+  routing:
+    success: ../[DEBUG] JWT Validated
+    failure: ../Set Invalid Token Error
+  logging:
+    failure: Missing sub, exp, DeviceUUID or Username
+  children:
+  - type: JSONPath
+    fields:
+      attributeName: netcare.jwt.expires
+      expression: $.exp
+      unmarshalType: java.lang.String
+      failOnError: true
+  - type: JSONPath
+    fields:
+      attributeName: netcare.jwt.netcareAppID
+      expression: $.AppID
+      unmarshalType: java.lang.String
+  - type: JSONPath
+    fields:
+      attributeName: netcare.jwt.DeviceUUID
+      expression: $.DeviceUUID
+      unmarshalType: java.lang.String
+      failOnError: true
+  - type: JSONPath
+    fields:
+      attributeName: netcare.jwt.Username
+      expression: $.Username
+      unmarshalType: java.lang.String
+      failOnError: true
+  - type: JSONPath
+    fields:
+      attributeName: netcare.jwt.AppID
+      expression: $.sub
+      unmarshalType: java.lang.String
+      failOnError: true
+- type: TraceFilter
+  fields:
+    traceMsg: "[DEBUG] JWT Validated\r\n"
+    traceBody: true
+    name: '[DEBUG] JWT Validated'
+  routing:
+    success: '../Check that the token has not expired - netcare.jwt.expires '
+  logging:
+    fatal: 'Error while tracing the message properties. Error: ${circuit.exception}'
+    failure: Failed to trace the message properties
+    success: Traced the message properties
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: netcare.jwt.expires
+    generatedProperties: []
+    consumedProperties: []
+    name: 'Check that the token has not expired - netcare.jwt.expires '
+    script: '{{file "Netcare JWT Auth-Files/Check that the token has not expired - netcare.jwt.expires_.groovy"}}'
+  routing:
+    success: ../Check if Verb is GET
+    failure: ../Set Token Expired
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: JWT Token Expired
+    success: Passed script filter
+- type: CompareAttributeFilter
+  fields:
+    name: Check if Verb is GET
+  routing:
+    success: ../Read Application
+    failure: ../Get incoming netcare.request.Username and netcare.request.DeviceUUID
+  children:
+  - type: AttributeCompare
+    fields:
+      attrName: ${http.request.verb}
+      expression: GET
+- type: PortalApplicationReadFilter
+  fields:
+    idSelector: ${netcare.jwt.AppID}
+    name: Read Application
+  routing:
+    success: ../Add HTTP Header apim_application_id
+- type: AddHTTPHeaderFilter
+  fields:
+    headerName: apim_application_id
+    headerValue: ${netcare.jwt.AppID}
+    name: Add HTTP Header apim_application_id
+  routing:
+    success: ../Add HTTP Header apim_method_name
+    failure: ../Add HTTP Header apim_method_name
+  logging:
+    fatal: 'Error in adding the HTTP header to the message. Error: ${circuit.exception}'
+    failure: Failed in adding the HTTP header to the message
+    success: Success in adding the HTTP header to the message
+- type: AddHTTPHeaderFilter
+  fields:
+    headerName: apim_method_name
+    headerValue: ${api.method.name}
+    name: Add HTTP Header apim_method_name
+  routing:
+    success: ../Add HTTP Header apim_name
+    failure: ../Add HTTP Header apim_name
+  logging:
+    fatal: 'Error in adding the HTTP header to the message. Error: ${circuit.exception}'
+    failure: Failed in adding the HTTP header to the message
+    success: Success in adding the HTTP header to the message
+- type: AddHTTPHeaderFilter
+  fields:
+    headerName: apim_name
+    headerValue: ${api.name}
+    name: Add HTTP Header apim_name
+  routing:
+    success: ../Restore Incoming Request
+    failure: ../Restore Incoming Request
+  logging:
+    fatal: 'Error in adding the HTTP header to the message. Error: ${circuit.exception}'
+    failure: Failed in adding the HTTP header to the message
+    success: Success in adding the HTTP header to the message
+- type: RestoreContentBodyFromAttributeFilter
+  fields:
+    name: Restore Incoming Request
+  routing:
+    success: ../[DEBUG] Trace Attributes
+  logging:
+    fatal: 'Error in restoring the message. Error: ${circuit.exception}'
+    failure: Failed to restore the message
+    success: Success in restoring the message
+- type: TraceFilter
+  fields:
+    traceMsg: '[DEBUG] Trace Attributes'
+    traceBody: true
+    name: '[DEBUG] Trace Attributes'
+  logging:
+    fatal: 'Error while tracing the message properties. Error: ${circuit.exception}'
+    failure: Failed to trace the message properties
+    success: Traced the message properties
+- type: JSONPathFilter
+  fields:
+    name: Get incoming netcare.request.Username and netcare.request.DeviceUUID
+  routing:
+    success: ../Check for MoClock Auth
+    failure: ../Set Bad Request
+  logging:
+    failure: Missing Username or DeviceUUID
+  children:
+  - type: JSONPath
+    fields:
+      attributeName: netcare.request.DeviceUUID
+      expression: $.DeviceUUID
+      unmarshalType: java.lang.String
+      failOnError: true
+  - type: JSONPath
+    fields:
+      attributeName: netcare.request.Username
+      expression: $.Username
+      unmarshalType: java.lang.String
+- type: CompareAttributeFilter
+  fields:
+    name: Check for MoClock Auth
+  routing:
+    success: ../Read Application
+    failure: '../Check netcare.jwt.DeviceUUID and Username vs netcare.request '
+  children:
+  - type: AttributeCompare
+    fields:
+      attrName: ${netcare.jwt.DeviceUUID}
+      matchType: IS
+      expression: ${netcare.request.DeviceUUID}
+  - type: AttributeCompare
+    fields:
+      attrName: ${netcare.jwt.Username}
+      matchType: IS
+      expression: moclock.device
+  - type: AttributeCompare
+    fields:
+      attrName: ${netcare.jwt.netcareAppID}
+      matchType: IS
+      expression: 404
+- type: CompareAttributeFilter
+  fields:
+    matchingRule: MATCH_ONE
+    name: 'Check netcare.jwt.DeviceUUID and Username vs netcare.request '
+  routing:
+    success: ../Set Invalid Token Error
+    failure: ../Read Application
+  logging:
+    maskType: FILTER
+    mask: 5
+    success: JWT DeviceUUID and Username  does not match those in the request
+  children:
+  - type: AttributeCompare
+    fields:
+      attrName: ${netcare.jwt.DeviceUUID}
+      matchType: IS_NOT
+      expression: ${netcare.request.DeviceUUID}
+  - type: AttributeCompare
+    fields:
+      attrName: ${netcare.jwt.Username}
+      matchType: IS_NOT
+      expression: ${netcare.request.Username}
+- type: CopyAttributeFilter
+  fields:
+    name: Set Invalid Token Error
+  routing:
+    success: ../False Filter
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.status
+      attributeValue: 401
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.message
+      attributeValue: Invalid JWT Token
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.code
+      attributeValue: 2
+      fromAttributeLocation: 3
+- type: FalseFilter
+  fields:
+    name: False Filter
+  logging:
+    fatal: 'False filter error. Error: ${circuit.exception}'
+    success: ""
+- type: CopyAttributeFilter
+  fields:
+    name: Set Bad Request
+  routing:
+    success: ../False Filter
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.message
+      attributeValue: Missing DeviceUUID or Username
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.status
+      attributeValue: 400
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.code
+      attributeValue: 2
+      fromAttributeLocation: 3
+- type: CopyAttributeFilter
+  fields:
+    name: Set Token Expired
+  routing:
+    success: ../False Filter
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.message
+      attributeValue: JWT Expired
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.status
+      attributeValue: 401
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.code
+      attributeValue: 2
+      fromAttributeLocation: 3

@@ -1,0 +1,62 @@
+---
+type: CoreAPIBroker
+fields:
+  summary: Yes Portal APIs
+  routingType: CUSTOM
+  uriprefix: /yesauth/api
+  corsUsage: null
+  id: a8fa8a12-f34a-48cd-a8c3-6d19c57dfe6c
+  name: Portal API
+  description: ""
+  destination: null
+children:
+- type: CoreAPIMethod
+  fields:
+    uriprefix: /login
+    httpMethod: POST
+    corsUsage: null
+    id: c3cbf750-8af6-4b8c-a6d9-a8d66162231e
+    name: Portal API
+    description: ""
+    notes: ""
+    filterCircuit: /Policies/Generated Policies/REST API's/Portal API/Portal API
+    destinationPath: null
+    copyQueryParams: true
+    destinationHttpVerb: '*'
+    responseSchema: /null
+  children:
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: portal_key
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: username
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: password
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: deviceToken
+      description: ""
+      dataType: string
+      paramType: header
+  - type: CoreAPIMethodQueryStringParameter
+    fields:
+      required: true
+      name: Authorization
+      description: ""
+      dataType: string
+      paramType: header

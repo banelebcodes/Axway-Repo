@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=UCA Global G2 Root, O=UniTrust, C=CN
+  content: '{{file "CN=UCA Global G2 Root, O=UniTrust, C=CN-cert.pem"}}'

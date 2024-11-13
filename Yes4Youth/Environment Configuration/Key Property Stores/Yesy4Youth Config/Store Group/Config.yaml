@@ -1,0 +1,14 @@
+---
+type: KPSReadWriteStore
+fields:
+  name: Config
+  description: ""
+  aliases:
+  - url
+  - username
+  - password
+  type: /Environment Configuration/Key Property Stores/Yesy4Youth Config/Type Group/Config
+  dataSource: /null
+  readKey: ""
+  key: Name
+  encrypted: Password

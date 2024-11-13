@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=NAVER Global Root Certification Authority, O=NAVER BUSINESS PLATFORM Corp., C=KR
+  content: '{{file "CN=NAVER Global Root Certification Autho-596286848-cert.pem"}}'

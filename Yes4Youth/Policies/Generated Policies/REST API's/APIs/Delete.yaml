@@ -1,0 +1,17 @@
+---
+type: FilterCircuit
+fields:
+  name: Delete
+  start: ./Set service context
+children:
+- type: ServiceContextFilter
+  fields:
+    serviceName: ${api.name}
+    metricsMask: 1
+    name: Set service context
+  routing:
+    success: ../Routing
+- type: CircuitDelegateFilter
+  fields:
+    name: Routing
+    circuitPK: /Policies/vTiger API Calls/Delete Operation

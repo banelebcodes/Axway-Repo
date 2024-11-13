@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=Microsoft RSA Root Certificate Authority 2017, O=Microsoft Corporation, C=US
+  content: '{{file "CN=Microsoft RSA Root Certificate Author-1015444516-cert.pem"}}'

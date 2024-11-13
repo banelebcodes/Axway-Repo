@@ -1,0 +1,7 @@
+---
+type: OAuthProviderProfile
+fields:
+  name: API Gateway
+  authzUrl: https://127.0.0.1:8089/api/oauth/authorize
+  tokenUrl: https://127.0.0.1:8089/api/oauth/token
+  tokenStore: /Libraries/OAuth2 Stores/Client Access Token Stores/OAuth Client Access Token Store

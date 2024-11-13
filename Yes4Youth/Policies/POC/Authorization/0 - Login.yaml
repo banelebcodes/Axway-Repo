@@ -1,0 +1,149 @@
+---
+type: FilterCircuit
+fields:
+  start: ./HTTP Basic
+  name: 0 - Login
+  description: ""
+  category: /System/Policy Categories/authorization
+children:
+- type: HttpBasicFilter
+  fields:
+    credentialFormat: Username
+    removeAuthNHeader: false
+    repository: /External Connections/Authentication Repositories/Local Repositories/Local User Store
+    name: HTTP Basic
+  routing:
+    success: ../Retrieve from user store
+    failure: ../Copy / Modify Attributes{1}
+  logging:
+    fatal: 'Error occurred while authenticating via HTTP Basic. Error: ${circuit.exception}'
+    failure: HTTP basic authentication failed
+    success: HTTP basic authentication success for ${authentication.subject.id}
+- type: VordelAttributeExtractFilter
+  fields:
+    enablyLegacyAttrNaming: true
+    name: Retrieve from user store
+  routing:
+    success: ../Init
+  logging:
+    fatal: 'Error occurred during when looking up of local user attributes. Error: ${circuit.exception}'
+    failure: Failed to look up local user attributes
+    success: Successfully looked up local user attributes for the user ${authentication.subject.id}
+- type: CopyAttributeFilter
+  fields:
+    name: Init
+  routing:
+    success: ../1 - vTiger Login Challenge
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: vTiger.auth.user
+      attributeValue: axway
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: vTiger.auth.accessKey
+      attributeValue: 54rzgoOmfuWzNO7f
+      fromAttributeLocation: 3
+- type: CircuitDelegateFilter
+  fields:
+    circuitPK: /Policies/POC/Authorization/1 - vTiger Login Chalange
+    name: 1 - vTiger Login Challenge
+  routing:
+    success: ../2 - vTiger Login
+  logging:
+    fatal: 'Error in calling policy shortcut circuit. Error: ${circuit.exception}'
+    failure: Failed in calling policy shortcut
+    success: Success in calling policy shortcut
+- type: CircuitDelegateFilter
+  fields:
+    circuitPK: /Policies/POC/Authorization/2 - vTiger Login
+    name: 2 - vTiger Login
+  routing:
+    success: ../Scripting Language
+  logging:
+    fatal: 'Error in calling policy shortcut circuit. Error: ${circuit.exception}'
+    failure: Failed in calling policy shortcut
+    success: Success in calling policy shortcut
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: Scripting Language
+    script: '{{file "0 - Login-Files/Scripting Language.groovy"}}'
+  routing:
+    success: ../JWT Sign
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: JWTSignFilter
+  fields:
+    selectedSignatureType: 1
+    privateKeyAlias: /Environment Configuration/Certificate Store/CN=Change this for production
+    signAlgorithm: RS256
+    sharedKey: |-
+      ZmY5YzFhYjAyOTVlMmNiMzRjMzNhZGIwZmJjMDZjNDE5YTAwODJlNjZlYjU4ZmVjYmI3NDgxMWNh
+      ODZmMTc1Mg==
+    protectAlgorithm: HS256
+    signaturePayloadType: 1
+    generateCTY: true
+    jwsMsgAttribute: ${jwtPayload}
+    useJwtTemplateMsgAttribute: ${jwtPayload}
+    generateISS: true
+    generateSUB: true
+    generateAUDMsgAttribute: ""
+    generateNBFValue: []
+    generateEXPValue: []
+    headerExtensions: []
+    payloadAudiences: []
+    name: JWT Sign
+  routing:
+    success: ../Set Message
+- type: ChangeMessageFilter
+  fields:
+    body: ${jwt.body}
+    outputContentType: java.lang.String
+    name: Set Message
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: CopyAttributeFilter
+  fields:
+    name: Copy / Modify Attributes{1}
+  routing:
+    success: ../Reflect Message
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: error.http.code
+      attributeValue: 401
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: error.message
+      attributeValue: Unauthorized
+      fromAttributeLocation: 3
+- type: Reflector
+  fields:
+    httpResponseStatus: 401
+    name: Reflect Message
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message

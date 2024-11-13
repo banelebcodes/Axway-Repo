@@ -1,0 +1,65 @@
+---
+type: FilterCircuit
+fields:
+  start: ./Call vTiger Login Challenge
+  name: 1 - vTiger Login Chalange
+  description: ""
+  category: /System/Policy Categories/authorization
+children:
+- type: ConnectToURLFilter
+  fields:
+    url: http://yb72.yes4youth.co.za/webservice.php?operation=getchallenge&username=${vTiger.auth.user}
+    caCerts: []
+    ssloptions:
+    - nosslv3
+    - notlsv1
+    - notlsv1_1
+    name: Call vTiger Login Challenge
+  routing:
+    success: ../JSON Path
+  logging:
+    fatal: 'Error occurred while routing request to endpoint. Error: ${circuit.exception}'
+    failure: Failed to route request to endpoint.
+    success: Successfully routed request to endpoint
+  children:
+  - type: SaveToFileFilter
+    fields:
+      name: Persistence Details
+- type: JSONPathFilter
+  fields:
+    name: JSON Path
+  routing:
+    success: ../HTTP 200?
+  children:
+  - type: JSONPath
+    fields:
+      attributeName: vTiger.auth.token
+      expression: $.result.token
+      unmarshalType: java.lang.String
+- type: SelectorFilter
+  fields:
+    expression: ${http.response.status == 200}
+    name: HTTP 200?
+  routing:
+    success: ../Scripting Language
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: Scripting Language
+    script: '{{file "1 - vTiger Login Chalange-Files/Scripting Language.groovy"}}'
+  routing:
+    success: ../True Filter
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: TrueFilter
+  fields:
+    name: True Filter
+  logging:
+    fatal: 'True filter error. Error: ${circuit.exception}'
+    failure: ""
+    success: True filter passed

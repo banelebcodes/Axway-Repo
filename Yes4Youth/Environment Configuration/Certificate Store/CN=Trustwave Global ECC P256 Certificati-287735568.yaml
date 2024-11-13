@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=Trustwave Global ECC P256 Certification Authority, O="Trustwave Holdings, Inc.", L=Chicago, ST=Illinois, C=US
+  content: '{{file "CN=Trustwave Global ECC P256 Certificati-287735568-cert.pem"}}'

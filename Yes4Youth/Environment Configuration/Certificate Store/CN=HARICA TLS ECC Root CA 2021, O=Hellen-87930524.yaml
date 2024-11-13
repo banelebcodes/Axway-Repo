@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=HARICA TLS ECC Root CA 2021, O=Hellenic Academic and Research Institutions CA, C=GR
+  content: '{{file "CN=HARICA TLS ECC Root CA 2021, O=Hellen-87930524-cert.pem"}}'

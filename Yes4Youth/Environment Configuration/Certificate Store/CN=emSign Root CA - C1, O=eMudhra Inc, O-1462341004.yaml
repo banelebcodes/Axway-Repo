@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=emSign Root CA - C1, O=eMudhra Inc, OU=emSign PKI, C=US
+  content: '{{file "CN=emSign Root CA - C1, O=eMudhra Inc, O-1462341004-cert.pem"}}'

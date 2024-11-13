@@ -1,0 +1,8 @@
+---
+type: DbConnection
+fields:
+  name: vTiger Database
+  username: axway
+  password: QXh3QFllczEyM0Ah
+  wildcardPassword: ""
+  url: jdbc:mysql://mysql-flexi-prod-san-002.mysql.database.azure.com:3306/yesbmsdev?useSSL=true&requireSSL=false

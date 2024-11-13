@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=HiPKI Root CA - G1, O="Chunghwa Telecom Co., Ltd.", C=TW
+  content: '{{file "CN=HiPKI Root CA - G1, O=(quote)Chunghwa-181356751-cert.pem"}}'

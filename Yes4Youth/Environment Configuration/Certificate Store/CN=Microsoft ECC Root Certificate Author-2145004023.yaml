@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=Microsoft ECC Root Certificate Authority 2017, O=Microsoft Corporation, C=US
+  content: '{{file "CN=Microsoft ECC Root Certificate Author-2145004023-cert.pem"}}'

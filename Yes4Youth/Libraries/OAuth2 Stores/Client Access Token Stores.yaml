@@ -1,0 +1,9 @@
+---
+type: ClientAccessTokenStoreGroup
+fields:
+  name: Client Access Token Stores
+children:
+- type: ClientAccessTokenPersist
+  fields:
+    name: OAuth Client Access Token Store
+    cache: /Libraries/Cache Manager/OAuth Client Access Token Cache

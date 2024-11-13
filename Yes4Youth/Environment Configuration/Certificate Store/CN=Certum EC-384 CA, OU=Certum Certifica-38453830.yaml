@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=Certum EC-384 CA, OU=Certum Certification Authority, O=Asseco Data Systems S.A., C=PL
+  content: '{{file "CN=Certum EC-384 CA, OU=Certum Certifica-38453830-cert.pem"}}'

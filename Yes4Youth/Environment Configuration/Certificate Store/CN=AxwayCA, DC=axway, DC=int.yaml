@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=AxwayCA, DC=axway, DC=int
+  content: '{{file "CN=AxwayCA, DC=axway, DC=int-cert.pem"}}'

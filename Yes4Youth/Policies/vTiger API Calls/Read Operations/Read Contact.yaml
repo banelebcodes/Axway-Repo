@@ -1,0 +1,135 @@
+---
+type: FilterCircuit
+fields:
+  name: Read Contact
+  description: ""
+  start: ./Extract from JWT
+children:
+- type: ExtractRESTAttributesFilter
+  fields:
+    decode: true
+    name: Extract REST Request Attributes
+  routing:
+    success: ../Retrieve from HTTP header
+- type: AttributeExtractHTTPHeaderFilter
+  fields:
+    headerName: Authorization
+    attributeName: payload
+    name: Retrieve from HTTP header
+  routing:
+    success: ../Read from Contacts
+  logging:
+    fatal: 'Error occurred while extracting attributes from HTTP header. Error: ${circuit.exception}'
+    failure: Failed to extract attribute HTTP header
+    success: Extracted attribute from HTTP header
+- type: AttributeExtractDbFilter
+  fields:
+    name: Read from Contacts
+    dbConn: /External Connections/Database Connections/vTiger Database
+    userIdentityAttribName: ""
+    placeDbResultsIntoUserAttributeList: false
+    messageAttrPrefix: result
+  routing:
+    success: ../Compare Attribute
+    failure: ../Set Message Error
+  logging:
+    fatal: 'Error occurred while extracting attributes from database/entity store. Error: ${circuit.exception}'
+    failure: Failed to extract attributes from database/entity store
+    success: Extracted attributes from database/entity store for ${attribute.subject.id}
+  children:
+  - type: Query
+    fields:
+      name: Select Contact
+      sqlStatement: '{{file "Read Contact-Files/Read from Contacts - Select Contact.sql"}}'
+- type: CompareAttributeFilter
+  fields:
+    name: Compare Attribute
+  routing:
+    success: ../Set result to 'resultString' to return
+    failure: ../Set Message No Data
+  children:
+  - type: AttributeCompare
+    fields:
+      matchType: IS_NOT
+      attrName: db.result.count
+      expression: 0
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: Set result to 'resultString' to return
+    script: '{{file "Read Contact-Files/Set result to ''resultString'' to return.groovy"}}'
+  routing:
+    success: ../Set Message result String
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: Reflector
+  fields:
+    name: Reflect Message Success
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: ChangeMessageFilter
+  fields:
+    body: ${resultString}
+    outputContentType: application/json
+    name: Set Message result String
+  routing:
+    success: ../Reflect Message Success
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: ChangeMessageFilter
+  fields:
+    body: An error has occured
+    name: Set Message Error
+    outputContentType: text/plain
+  routing:
+    success: ../Reflect Message Error
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: ChangeMessageFilter
+  fields:
+    name: Set Message No Data
+    outputContentType: text/plain
+    body: '{{file "Read Contact-Files/Set Message No Data.txt"}}'
+  routing:
+    success: ../Reflect Message No Data
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: Reflector
+  fields:
+    httpResponseStatus: 204
+    name: Reflect Message No Data
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: Reflector
+  fields:
+    httpResponseStatus: 500
+    name: Reflect Message Error
+  logging:
+    fatal: 'Error occurred while echoing the message. Error: ${circuit.exception}'
+    failure: Failed to echo back the message
+    success: Successfully echoed back the message
+- type: CircuitDelegateFilter
+  fields:
+    name: Extract from JWT
+    circuitPK: /Policies/Utilities/Get Session Token from JWT
+  routing:
+    success: ../Extract REST Request Attributes
+  logging:
+    fatal: 'Error in calling policy shortcut circuit. Error: ${circuit.exception}'
+    failure: Failed in calling policy shortcut
+    success: Success in calling policy shortcut

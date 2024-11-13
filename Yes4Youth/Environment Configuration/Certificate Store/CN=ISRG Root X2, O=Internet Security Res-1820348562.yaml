@@ -1,0 +1,5 @@
+---
+type: Certificate
+fields:
+  dname: CN=ISRG Root X2, O=Internet Security Research Group, C=US
+  content: '{{file "CN=ISRG Root X2, O=Internet Security Res-1820348562-cert.pem"}}'

@@ -1,0 +1,227 @@
+---
+type: FilterCircuit
+fields:
+  name: JWT Auth
+  description: ""
+  start: ./Store Incoming Request
+children:
+- type: StoreContentBodyToAttributeFilter
+  fields:
+    name: Store Incoming Request
+  routing:
+    success: ../Extract Headers
+  logging:
+    fatal: 'Error in storing the message. Error: ${circuit.exception}'
+    failure: Failed to store the message in attribute
+    success: 'Success in storing the message to attribute '
+- type: ExtractRESTAttributesFilter
+  fields:
+    useQueryString: false
+    decode: true
+    name: Extract Headers
+  routing:
+    success: ../Strip Bearer off token
+- type: StringReplaceFilter
+  fields:
+    sourceAttribute: http.header.Authorization
+    destAttribute: y4y.api.jwt
+    destAttributeOverride: true
+    matchMode: REGEX_REPLACE
+    regexMatchString: '[Bb]earer * '
+    name: Strip Bearer off token
+  routing:
+    success: ../JWT Verify
+- type: JWTVerifyFilter
+  fields:
+    keyDiscoverySelection: 1
+    usePublicKey: false
+    publicKeyAlias: /null
+    sharedKey: |-
+      ZmY5YzFhYjAyOTVlMmNiMzRjMzNhZGIwZmJjMDZjNDE5YTAwODJlNjZlYjU4ZmVjYmI3NDgxMWNh
+      ODZmMTc1Mg==
+    useJwkKey: false
+    critHeader: []
+    signAlgorithms:
+    - HS256
+    - RS256
+    - ES256
+    - PS256
+    contentTypes: []
+    types: []
+    name: JWT Verify
+    jwsToken: ${y4y.api.jwt}
+    useCtyHeaderContentType: false
+    defaultContentType: application/json
+  routing:
+    success: ../Get JWT fields
+    failure: ../Set Invalid Token Error
+- type: CopyAttributeFilter
+  fields:
+    name: Set Invalid Token Error
+  routing:
+    success: ../False Filter
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.status
+      attributeValue: 401
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.message
+      attributeValue: Invalid JWT Token
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.code
+      attributeValue: 2
+      fromAttributeLocation: 3
+- type: FalseFilter
+  fields:
+    name: False Filter
+  logging:
+    fatal: 'False filter error. Error: ${circuit.exception}'
+    success: ""
+- type: JSONPathFilter
+  fields:
+    name: Get JWT fields
+  routing:
+    success: '../Check that the token has not expired - y4y.jwt.expires '
+    failure: ../Set Invalid Token Error
+  logging:
+    failure: Missing sub, exp, DeviceUUID or Username
+  children:
+  - type: JSONPath
+    fields:
+      attributeName: y4y.jwt.expires
+      expression: $.exp
+      unmarshalType: java.lang.String
+      failOnError: true
+  - type: JSONPath
+    fields:
+      attributeName: y4y.jwt.sessionToken
+      expression: $.sessionToken
+      unmarshalType: java.lang.String
+  - type: JSONPath
+    fields:
+      attributeName: y4y.jwt.Username
+      expression: $.sub
+      unmarshalType: java.lang.String
+      failOnError: true
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: netcare.jwt.expires
+    generatedProperties: []
+    consumedProperties: []
+    name: 'Check that the token has not expired - y4y.jwt.expires '
+    script: '{{file "JWT Auth-Files/Check that the token has not expired - y4y.jwt.expires_.groovy"}}'
+  routing:
+    success: ../Add HTTP Header
+    failure: ../Set Token Expired
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: JWT Token Expired
+    success: Passed script filter
+- type: CopyAttributeFilter
+  fields:
+    name: Set Token Expired
+  routing:
+    success: ../False Filter
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.message
+      attributeValue: JWT Expired
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.status
+      attributeValue: 401
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: netcare.error.code
+      attributeValue: 2
+      fromAttributeLocation: 3
+- type: RestoreContentBodyFromAttributeFilter
+  fields:
+    name: Restore Incoming Request
+  routing:
+    success: ../True Filter
+  logging:
+    fatal: 'Error in restoring the message. Error: ${circuit.exception}'
+    failure: Failed to restore the message
+    success: Success in restoring the message
+- type: TrueFilter
+  fields:
+    name: True Filter
+  logging:
+    fatal: 'True filter error. Error: ${circuit.exception}'
+    failure: ""
+    success: True filter passed
+- type: PortalApplicationReadFilter
+  fields:
+    name: Read Application
+  routing:
+    success: ../Add HTTP Header
+- type: TraceFilter
+  fields:
+    name: Trace Filter
+    traceMsg: ${apimgmt.application}
+  routing:
+    success: ../Restore Incoming Request
+  logging:
+    fatal: 'Error while tracing the message properties. Error: ${circuit.exception}'
+    failure: Failed to trace the message properties
+    success: Traced the message properties
+- type: AddHTTPHeaderFilter
+  fields:
+    name: Add HTTP Header
+    headerName: apim_application_id
+    headerValue: ${apimgmt.application}
+  routing:
+    success: ../Add HTTP Header 2
+    failure: ../Add HTTP Header 2
+  logging:
+    fatal: 'Error in adding the HTTP header to the message. Error: ${circuit.exception}'
+    failure: Failed in adding the HTTP header to the message
+    success: Success in adding the HTTP header to the message
+- type: AddHTTPHeaderFilter
+  fields:
+    name: Add HTTP Header 2
+    headerName: apim_method_name
+    headerValue: ${api.method.name}
+  routing:
+    success: ../Add HTTP Header 3
+    failure: ../Add HTTP Header 3
+  logging:
+    fatal: 'Error in adding the HTTP header to the message. Error: ${circuit.exception}'
+    failure: Failed in adding the HTTP header to the message
+    success: Success in adding the HTTP header to the message
+- type: AddHTTPHeaderFilter
+  fields:
+    name: Add HTTP Header 3
+    headerName: apim_name
+    headerValue: $[api.name}
+  routing:
+    success: ../Restore Incoming Request
+    failure: ../Restore Incoming Request
+  logging:
+    fatal: 'Error in adding the HTTP header to the message. Error: ${circuit.exception}'
+    failure: Failed in adding the HTTP header to the message
+    success: Success in adding the HTTP header to the message

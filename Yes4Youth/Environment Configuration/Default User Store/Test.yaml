@@ -1,0 +1,5 @@
+---
+type: User
+fields:
+  password: dGVzdA==
+  name: Test

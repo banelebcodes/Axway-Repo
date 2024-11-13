@@ -1,0 +1,166 @@
+---
+type: FilterCircuit
+fields:
+  name: Contact Login
+  description: ""
+  start: ./Extract REST Request Attributes
+children:
+- type: ExtractRESTAttributesFilter
+  fields:
+    decode: true
+    name: Extract REST Request Attributes
+  routing:
+    success: ../Verify Users
+- type: AttributeExtractHTTPHeaderFilter
+  fields:
+    headerName: Authorization
+    attributeName: payload
+    name: Retrieve from HTTP header
+  logging:
+    fatal: 'Error occurred while extracting attributes from HTTP header. Error: ${circuit.exception}'
+    failure: Failed to extract attribute HTTP header
+    success: Extracted attribute from HTTP header
+- type: AttributeExtractDbFilter
+  fields:
+    name: Verify Users
+    dbConn: /External Connections/Database Connections/vTiger Database
+    userIdentityAttribName: ""
+    placeDbResultsIntoUserAttributeList: false
+  routing:
+    success: ../Compare Attribute
+    failure: ../Set Invalid Credentials Error
+  logging:
+    fatal: 'Error occurred while extracting attributes from database/entity store. Error: ${circuit.exception}'
+    failure: Failed to extract attributes from database/entity store
+    success: Extracted attributes from database/entity store for ${attribute.subject.id}
+  children:
+  - type: Query
+    fields:
+      name: Select User
+      sqlStatement: '{{file "Contact Login-Files/Verify Users - Select User.sql"}}'
+- type: CopyAttributeFilter
+  fields:
+    name: Set Invalid Credentials Error
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: y4y.error.status
+      attributeValue: 401
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: y4y.error.message
+      attributeValue: Username or Password invalid
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: y4y.error.code
+      attributeValue: 2
+      fromAttributeLocation: 3
+- type: JavaScriptFilter
+  fields:
+    engineName: groovy
+    requiredProperties: []
+    generatedProperties: []
+    consumedProperties: []
+    name: Scripting Language
+    script: '{{file "Contact Login-Files/Scripting Language.groovy"}}'
+  routing:
+    success: ../JWT Sign
+  logging:
+    fatal: 'Error while attempt to run script filter. Error: ${circuit.exception}'
+    failure: Failed script filter
+    success: Passed script filter
+- type: JWTSignFilter
+  fields:
+    selectedSignatureType: 1
+    privateKeyAlias: /Environment Configuration/Certificate Store/CN=Change this for production
+    signAlgorithm: RS256
+    sharedKey: |-
+      ZmY5YzFhYjAyOTVlMmNiMzRjMzNhZGIwZmJjMDZjNDE5YTAwODJlNjZlYjU4ZmVjYmI3NDgxMWNh
+      ODZmMTc1Mg==
+    protectAlgorithm: HS256
+    signaturePayloadType: 1
+    generateCTY: true
+    jwsMsgAttribute: ${jwtPayload}
+    useJwtTemplateMsgAttribute: ${jwtPayload}
+    generateISS: true
+    generateSUB: true
+    generateAUDMsgAttribute: ""
+    generateNBFValue: []
+    generateEXPValue: []
+    headerExtensions: []
+    payloadAudiences: []
+    name: JWT Sign
+  routing:
+    success: ../Set Message
+- type: ChangeMessageFilter
+  fields:
+    body: ${jwt.body}
+    outputContentType: java.lang.String
+    name: Set Message
+  logging:
+    fatal: 'Error in setting the message. Error: ${circuit.exception}'
+    failure: Failed in setting the message
+    success: Success in setting the message
+- type: CopyAttributeFilter
+  fields:
+    name: Init
+  routing:
+    success: ../Call vTiger Logins
+  logging:
+    fatal: 'Error occurred while copying attributes. Error: ${circuit.exception}'
+    failure: Failed to copy attributes
+    success: Copied attributes successfully
+  children:
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: vTiger.auth.user
+      attributeValue: axway
+      fromAttributeLocation: 3
+  - type: CopyAttribute
+    fields:
+      fromAttributeName: ""
+      toAttributeName: vTiger.auth.accessKey
+      attributeValue: 54rzgoOmfuWzNO7f
+      fromAttributeLocation: 3
+- type: CircuitChainFilter
+  fields:
+    name: Call vTiger Logins
+  routing:
+    success: ../Scripting Language
+  logging:
+    fatal: 'Error processing policy shortcuts. Error: ${circuit.exception}'
+    failure: Failure during calls in policy shortcut chain
+    success: Success in calling all policy shortcuts
+  children:
+  - type: CircuitReference
+    fields:
+      priority: 0
+      name: vTiger Login Challenge
+      circuitPK: /Policies/Auth/1 - vTiger Login Chalange
+  - type: CircuitReference
+    fields:
+      priority: 1
+      name: vTiger Login Call
+      circuitPK: /Policies/Auth/2 - vTiger Login
+- type: CompareAttributeFilter
+  fields:
+    name: Compare Attribute
+  routing:
+    success: ../Init
+    failure: ../Set Invalid Credentials Error
+  children:
+  - type: AttributeCompare
+    fields:
+      matchType: IS_NOT
+      attrName: db.result.count
+      expression: 0
