@@ -1,0 +1,351 @@
+{
+	"info": {
+		"_postman_id": "69a364f4-fb2e-438c-892c-c258d6b09c07",
+		"name": "Yes Portal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27982727"
+	},
+	"item": [
+		{
+			"name": "Cstom Operation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJheHdheSIsImF1ZCI6ImF1ZGllbmNlIiwiaXNzIjoiWW91cklzc3VlciIsInNlc3Npb25Ub2tlbiI6IjViZTc1NDk2NzIxZjdiYTNkNzQ3IiwiZXhwIjozNDYwNTYyMzA4LCJ1c2VySWQiOiJ1c2VySWQiLCJpYXQiOjE3MzAyNzkzNTQsImp0aSI6IklkLWJhZjcyMTY3ZjAwOTViZGE4NTJhM2U0MiIsInVzZXJuYW1lIjoiYXh3YXkifQ.cMvkqrIeDCHuTteNJ8wqB53LKo7jhcYxYFikTGIva4w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "username",
+						"value": "noma@mailinator.com",
+						"disabled": true
+					},
+					{
+						"key": "password",
+						"value": "password",
+						"disabled": true
+					},
+					{
+						"key": "portalKey",
+						"value": "cHJvZCw2Nng4MTIzMDg=",
+						"type": "text"
+					},
+					{
+						"key": "deviceId",
+						"value": "93506dd051320f9949932e62daf6d96a35266ee60b95282262a07306d9ac86c3",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"operation\": \"loginPortal\",\n    \"params\": {\n        \"portal_key\": \"value1\",\n        \"username\": \"value2\",\n        \"password\": \"value2\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://stapigw.yes4youth.co.za/y4y/api/customoperation",
+					"protocol": "https",
+					"host": [
+						"stapigw",
+						"yes4youth",
+						"co",
+						"za"
+					],
+					"path": [
+						"y4y",
+						"api",
+						"customoperation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Portal",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJheHdheSIsImF1ZCI6ImF1ZGllbmNlIiwiaXNzIjoiWW91cklzc3VlciIsInNlc3Npb25Ub2tlbiI6IjViZTc1NDk2NzIxZjdiYTNkNzQ3IiwiZXhwIjozNDYwNTYyMzA4LCJ1c2VySWQiOiJ1c2VySWQiLCJpYXQiOjE3MzAyNzkzNTQsImp0aSI6IklkLWJhZjcyMTY3ZjAwOTViZGE4NTJhM2U0MiIsInVzZXJuYW1lIjoiYXh3YXkifQ.cMvkqrIeDCHuTteNJ8wqB53LKo7jhcYxYFikTGIva4w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "username",
+						"value": "noma@mailinator.com",
+						"disabled": true
+					},
+					{
+						"key": "password",
+						"value": "password",
+						"disabled": true
+					},
+					{
+						"key": "portalKey",
+						"value": "cHJvZCw2Nng4MTIzMDg=",
+						"type": "text"
+					},
+					{
+						"key": "deviceId",
+						"value": "93506dd051320f9949932e62daf6d96a35266ee60b95282262a07306d9ac86c3",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://stapigw.yes4youth.co.za/y4y/api/portal/getportal",
+					"protocol": "https",
+					"host": [
+						"stapigw",
+						"yes4youth",
+						"co",
+						"za"
+					],
+					"path": [
+						"y4y",
+						"api",
+						"portal",
+						"getportal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trust Device",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJheHdheSIsImF1ZCI6ImF1ZGllbmNlIiwiaXNzIjoiWW91cklzc3VlciIsInNlc3Npb25Ub2tlbiI6IjViZTc1NDk2NzIxZjdiYTNkNzQ3IiwiZXhwIjozNDYwNTYyMzA4LCJ1c2VySWQiOiJ1c2VySWQiLCJpYXQiOjE3MzAyNzkzNTQsImp0aSI6IklkLWJhZjcyMTY3ZjAwOTViZGE4NTJhM2U0MiIsInVzZXJuYW1lIjoiYXh3YXkifQ.cMvkqrIeDCHuTteNJ8wqB53LKo7jhcYxYFikTGIva4w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "mfaToken",
+						"value": "noma@mailinator.com"
+					},
+					{
+						"key": "mfaCode",
+						"value": "810150"
+					},
+					{
+						"key": "portalKey",
+						"value": "cHJvZCw2Nng4MTIzMDg=",
+						"type": "text"
+					},
+					{
+						"key": "contactId",
+						"value": "815005",
+						"type": "text"
+					},
+					{
+						"key": "username",
+						"value": "noma@mailinator.com",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://stapigw.yes4youth.co.za/y4y/api/portal/trustdevice",
+					"protocol": "https",
+					"host": [
+						"stapigw",
+						"yes4youth",
+						"co",
+						"za"
+					],
+					"path": [
+						"y4y",
+						"api",
+						"portal",
+						"trustdevice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check MFA",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJheHdheSIsImF1ZCI6ImF1ZGllbmNlIiwiaXNzIjoiWW91cklzc3VlciIsInNlc3Npb25Ub2tlbiI6IjViZTc1NDk2NzIxZjdiYTNkNzQ3IiwiZXhwIjozNDYwNTYyMzA4LCJ1c2VySWQiOiJ1c2VySWQiLCJpYXQiOjE3MzAyNzkzNTQsImp0aSI6IklkLWJhZjcyMTY3ZjAwOTViZGE4NTJhM2U0MiIsInVzZXJuYW1lIjoiYXh3YXkifQ.cMvkqrIeDCHuTteNJ8wqB53LKo7jhcYxYFikTGIva4w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "mfaToken",
+						"value": "57c6ca4489c87b8724fd781e6f5b8b04"
+					},
+					{
+						"key": "mfaCode",
+						"value": "810150"
+					},
+					{
+						"key": "portalKey",
+						"value": "cHJvZCw2Nng4MTIzMDg=",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://stapigw.yes4youth.co.za/y4y/api/portal/checkmfa",
+					"protocol": "https",
+					"host": [
+						"stapigw",
+						"yes4youth",
+						"co",
+						"za"
+					],
+					"path": [
+						"y4y",
+						"api",
+						"portal",
+						"checkmfa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Portal Login",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJheHdheSIsImF1ZCI6ImF1ZGllbmNlIiwiaXNzIjoiWW91cklzc3VlciIsInNlc3Npb25Ub2tlbiI6IjViZTc1NDk2NzIxZjdiYTNkNzQ3IiwiZXhwIjozNDYwNTYyMzA4LCJ1c2VySWQiOiJ1c2VySWQiLCJpYXQiOjE3MzAyNzkzNTQsImp0aSI6IklkLWJhZjcyMTY3ZjAwOTViZGE4NTJhM2U0MiIsInVzZXJuYW1lIjoiYXh3YXkifQ.cMvkqrIeDCHuTteNJ8wqB53LKo7jhcYxYFikTGIva4w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "username",
+						"value": "noma@mailinator.com"
+					},
+					{
+						"key": "password",
+						"value": "password"
+					},
+					{
+						"key": "portalKey",
+						"value": "cHJvZCw2Nng4MTIzMDg=",
+						"type": "text"
+					},
+					{
+						"key": "deviceToken",
+						"value": "93506dd051320f9949932e62daf6d96a35266ee60b95282262a07306d9ac86c3",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://stapigw.yes4youth.co.za/y4y/api/portal/login",
+					"protocol": "https",
+					"host": [
+						"stapigw",
+						"yes4youth",
+						"co",
+						"za"
+					],
+					"path": [
+						"y4y",
+						"api",
+						"portal",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pre Auth",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "7d9097fc-8b0f-42bc-adce-1328ec47f413",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "KeyId",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "user",
+						"value": "axway",
+						"disabled": true
+					},
+					{
+						"key": "accessKey",
+						"value": "54rzgoOmfuWzNO7f",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://stapigw.yes4youth.co.za/auth/preauth",
+					"protocol": "https",
+					"host": [
+						"stapigw",
+						"yes4youth",
+						"co",
+						"za"
+					],
+					"path": [
+						"auth",
+						"preauth"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
